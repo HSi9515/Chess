@@ -1,0 +1,9 @@
+1 = white
+-1 = black
+
+White will start on the bottom of the board and black on the top. 
+
+Class Distribution:
+  Aydan: GraphicsPanel, Pawn, King
+  Josh:
+  Hannah:
