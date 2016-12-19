@@ -1,3 +1,8 @@
+Remember to commit all code to your own branch when you've tested something successfully and think it's worth taking a 
+"snapshot" (saving the version). When things from different branches are ready to function together, we'll merge them. 
+(This would be a lot easier with Git Bash working on our laptops so our laptops themselves can keep track of branches and 
+versions. But we're probably not allowed to get it...)
+
 Player representations:
 1 = white
 2 = black
