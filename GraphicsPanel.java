@@ -42,7 +42,7 @@ public class GraphicsPanel extends JPanel implements MouseListener{
 		
 		board = new Piece[8][8];
 		for(int i = 0; i<8; i++){
-			board[0][i] = new Pawn(1);
+			board[0][i] = new Pawn(1);  //this is where you can instantiate your pieces to test them
 			board[7][i] = new Pawn(2);
 		}
 		for(int i = 1; i<7; i++){
@@ -106,7 +106,7 @@ public class GraphicsPanel extends JPanel implements MouseListener{
 		
 	}
 
-	@Override
+	
 	public void mouseClicked(MouseEvent e) {
 	
 		System.out.println("x = " + (int)e.getX()/100);
