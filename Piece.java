@@ -16,7 +16,7 @@ public class Piece {
 										// This png must be saved in the images folder and will be loaded 
 										// in the constructor.
 	
-	private int player;					// This int will represent which team the piece is, 1 for yellow team, 
+	private int player;					// This int will represent which team the piece is, 1 for white team, 
 									    // 2 for black team. 
 	
 	// method: Default constructor - see packed constructors comments for a description of parameters.
@@ -26,24 +26,24 @@ public class Piece {
 		
 	// method: Character's packed constructor
 	// description: Initialize a new Character object.
-	// parameters: int player - should be either 1 or 2. 1 for yellow team, 2 for black team.
+	// parameters: int player - should be either 1 or 2. 1 for white team, 2 for black team.
 	public Piece(int player){
-		setImageIcon("images/king1.png");
 		this.setPlayer(player);			
+		setImageIcon("king");
 	}
 	
 	// method: Character's packed constructor
 	// description: Initialize a new Character object.
-	// parameters: int player - should be either 1 or 2. 1 for yellow team, 2 for black team.
+	// parameters: int player - should be either 1 or 2. 1 for white team, 2 for black team.
 	public Piece(int player, String imagePath){
-		setImageIcon(imagePath);
 		this.setPlayer(player);			
+		setImageIcon(imagePath);
 	}
 	
 	protected void setImageIcon(String imagePath){
 		ClassLoader cldr = this.getClass().getClassLoader();	
 		
-		URL imageURL = cldr.getResource(imagePath);				
+		URL imageURL = cldr.getResource("images/" + imagePath + player + ".png");				
         image = new ImageIcon(imageURL);
 	}
 	
