@@ -1,6 +1,8 @@
 Player representations:
 1 = white
 2 = black
+3 = filler
+
 
 White will start on the bottom of the board and black on the top. 
 

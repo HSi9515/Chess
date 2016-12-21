@@ -16,14 +16,14 @@ import javax.swing.JPanel;
 
 public class GraphicsPanel extends JPanel implements MouseListener{
 	
-	Piece p = new Piece();					// This piece should be deleted.  It is just here to later demonstrate how to paint on the board.
+	Piece p = new Pawn(1);					// This piece should be deleted.  It is just here to later demonstrate how to paint on the board.
 	
 	
 	private final int SQUARE_WIDTH = 90;    // The width of one space on the board.  Constant used for drawing board.
 	private final int OFFSET = 30;
 	private Location from;   			    // holds the coordinates of the square that the user would like to move from.
 	private Location to;   				    // holds the coordinates of the square that the user would like to move to.
-	private boolean click;   				// false until the game has started by somebody clicking on the board.  should also be set to false
+	private int click;   				// false until the game has started by somebody clicking on the board.  should also be set to false
 	                         				// after an attempted move.
 	private Piece[][] board; 				// an 8x8 board of 'Pieces'.  Each spot should be filled by one of the chess pieces or a 'space'. 
 	
@@ -34,7 +34,26 @@ public class GraphicsPanel extends JPanel implements MouseListener{
         this.setFocusable(true);					 // for keylistener
 		this.addMouseListener(this);
 		
+		
+		
+		
+		
+		//Board[y position aka row][x position aka column]
+		
+		board = new Piece[8][8];
+		for(int i = 0; i<8; i++){
+			board[0][i] = new Pawn(1);  //this is where you can instantiate your pieces to test them
+			board[7][i] = new Pawn(2);   //just delete new Pawn and replace it with whichever pieces your making
+		}
+		for(int i = 1; i<7; i++){
+			for(int j = 0; j<board[i].length; j++){
+				board[i][j] = new Filler();
+			}
+		}
+		
 		// instantiate the instance variables.
+		
+		click = 1;
 	}
 	
 	// method: paintComponent
@@ -66,20 +85,74 @@ public class GraphicsPanel extends JPanel implements MouseListener{
 				g2.fillRect(i*SQUARE_WIDTH+OFFSET,j*SQUARE_WIDTH+OFFSET,SQUARE_WIDTH,SQUARE_WIDTH);
 			}
 		
+		
+		
+		
+		
+		
 		// instead of drawing a single piece you should loop through the two-dimensional array and draw each piece except for 
 		// empty spaces.
-		p.draw(g2, this, new Location(4,6));
+	
+		for(int i = 0; i<board.length;  i++){
+			for(int j = 0; j<board[i].length; j++){
+				if(board[i][j].getPlayer() != 3)
+					board[i][j].draw(g2, this, new Location(i,j));
+			}
+		}
+		
+		
+		
+		
+		
 	}
 
-	@Override
+	
 	public void mouseClicked(MouseEvent e) {
-		// use math to figure out the row and column that was clicked.
-		System.out.println("x = " + e.getX());
-		System.out.println("y = " + e.getY());
+	
+		System.out.println("x = " + (int)e.getX()/100);
+		System.out.println("y = " + (int)e.getY()/100);
+		
+	
+		
+		if(click == 1){
+			
+			if(board[(int)e.getY()/100][ (int)e.getX()/100].getPlayer() != 3){
+			
+			from = new Location((int)e.getY()/100, (int)e.getX()/100);
+			System.out.println(board[from.getRow()][from.getColumn()].getPlayer());
+			click = 2;
+			
+			}
+				
+			
+		}
+		else if(click == 2){
+			
+			System.out.println("Second click has been registered");
+			
+			to = new Location((int)e.getY()/100, (int)e.getX()/100);
+			
+			
+			if(board[from.getRow()][from.getColumn()].isValidMove(from, to, board)){
+					
+				System.out.println("The isValidMove method has returned true");
+			
+				this.move(from, to);
+				click = 1;
+		}
+		else{
+				
+			click = 1;
+		}
+			
+		}
+		
+	
+		
 		
 		this.repaint();
 	}
-
+	
 	@Override
 	public void mousePressed(MouseEvent e) {
 		// TODO Auto-generated method stub
@@ -103,6 +176,13 @@ public class GraphicsPanel extends JPanel implements MouseListener{
 		// TODO Auto-generated method stub
 		
 	}
+	public void move(Location f, Location t){
+		Piece p = board[f.getRow()][f.getColumn()];
+		board[f.getRow()][f.getColumn()] = new Filler();
+		board[t.getRow()][t.getColumn()] = p;
+		
+	}
 	
 
 }
+
