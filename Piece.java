@@ -16,7 +16,7 @@ public class Piece {
 										// This png must be saved in the images folder and will be loaded 
 										// in the constructor.
 	
-	private int player;					// This int will represent which team the piece is, 1 for yellow team, 
+	private int player;					// This int will represent which team the piece is, 1 for white team, 
 									    // 2 for black team. 
 	
 	// method: Default constructor - see packed constructors comments for a description of parameters.
@@ -26,24 +26,30 @@ public class Piece {
 		
 	// method: Character's packed constructor
 	// description: Initialize a new Character object.
-	// parameters: int player - should be either 1 or 2. 1 for yellow team, 2 for black team.
+	// parameters: int player - should be either 1 or 2. 1 for white team, 2 for black team.
 	public Piece(int player){
-		setImageIcon("images/king1.png");
 		this.setPlayer(player);			
+		setImageIcon("pawn");
 	}
 	
 	// method: Character's packed constructor
 	// description: Initialize a new Character object.
-	// parameters: int player - should be either 1 or 2. 1 for yellow team, 2 for black team.
+	// parameters: int player - should be either 1 or 2. 1 for white team, 2 for black team.
 	public Piece(int player, String imagePath){
+		this.setPlayer(player);
 		setImageIcon(imagePath);
-		this.setPlayer(player);			
 	}
+	
 	
 	protected void setImageIcon(String imagePath){
 		ClassLoader cldr = this.getClass().getClassLoader();	
+		URL imageURL;
 		
-		URL imageURL = cldr.getResource(imagePath);				
+		if (player == 1 || player == 2)
+			imageURL = cldr.getResource("images/" + imagePath + player + ".png");	
+		else
+			imageURL = cldr.getResource("images/space.png");	
+
         image = new ImageIcon(imageURL);
 	}
 	
@@ -65,7 +71,7 @@ public class Piece {
 	//			   Component c - this is the component that the image will be drawn onto.
 	//			   Location l - a Location that determines where to draw the piece.
 	public void draw(Graphics g, Component c, Location l) {
-        image.paintIcon(c, g, l.column*75, l.row*90); // you'll need to update the last two parameters so that it will 
+        image.paintIcon(c, g, l.column*90 + 5, l.row*90 + 5); // you'll need to update the last two parameters so that it will 
         											  // correctly draw the piece in the right location.
     }
 
