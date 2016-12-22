@@ -6,6 +6,8 @@ versions. But we're probably not allowed to get it...)
 Player representations:
 1 = white
 2 = black
+3 = filler
+  * but we should code our project to focus less on a filler being 3 and more on it NOT being a 1 or 2 
 
 White will start on the bottom of the board and black on the top. 
 
