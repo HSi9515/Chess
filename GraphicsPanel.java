@@ -5,6 +5,9 @@
 // 				on the JPanel in the GraphicsMain class.  
 //
 // Since you will modify this class you should add comments that describe when and how you modified the class.  
+//
+
+
 
 import java.awt.Dimension;
 import java.awt.Graphics;
