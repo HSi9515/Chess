@@ -56,4 +56,8 @@ public class Queen extends Piece{
 		return false;
 	}
 	
+	public String toString(){
+		return super.toString() + ": Queen";
+	}
+	
 }
