@@ -30,7 +30,7 @@ public class Queen extends Piece{
 		
 		else if (from.column == to.column){
 			for (int i = Math.min(from.row, to.row) + 1; i < Math.max(from.row, to.row); i++){
-				if (b[i][from.column].getPlayer() == 1 || b[from.column][i].getPlayer() == 2){
+				if (b[i][from.column].getPlayer() == 1 || b[i][from.column].getPlayer() == 2){
 					System.out.println("same column");
 					return false;
 				}
