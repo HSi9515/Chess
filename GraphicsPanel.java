@@ -47,8 +47,8 @@ public class GraphicsPanel extends JPanel implements MouseListener{ //THINGS TO 
 		}
 		
 		for(int i = 0; i<8; i++){
-			board[0][i] = new Pawn(1);  //this is where you can instantiate your pieces to test them
-			board[7][i] = new Pawn(2);   //just delete new Pawn and replace it with whichever pieces your making
+			board[0][i] = new Pawn(2);  //this is where you can instantiate your pieces to test them
+			board[7][i] = new Pawn(1);   //just delete new Pawn and replace it with whichever pieces your making
 		}
 		
 		board[1][1] = new Queen();
