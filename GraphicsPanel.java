@@ -139,6 +139,16 @@ public class GraphicsPanel extends JPanel implements MouseListener{ //THINGS TO 
 			
 				this.move(from, to);
 				highlight.setRow(-99);
+				
+				for(int i = 0; i<board.length; i++){
+					if(board[0][i] instanceof Pawn && board[0][i].getPlayer() == 1)
+						board[0][i] = new Queen(1);
+					if(board[7][i] instanceof Pawn && board[7][i].getPlayer() == 2)
+						board[7][i] = new Queen(2);	
+				}
+				
+				
+				
 				click = 1;
 			}
 			
