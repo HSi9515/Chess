@@ -123,7 +123,13 @@ public class GraphicsPanel extends JPanel implements MouseListener{ //THINGS TO 
 				from = new Location((int)e.getY()/90, (int)e.getX()/90);
 				highlight = from;
 				System.out.println("    Player " + board[from.getRow()][from.getColumn()].getPlayer());
-				click = 2;
+				
+				//NEW PARTS  1/4/2017*************
+				if(!board[from.getRow()][from.getColumn()].stuck(board, from))
+					click = 2;
+				else
+					click = 1;
+				//**********************************
 			
 			}
 			
@@ -138,6 +144,15 @@ public class GraphicsPanel extends JPanel implements MouseListener{ //THINGS TO 
 				System.out.println("    Valid move");
 			
 				this.move(from, to);
+				
+				//NEW PARTS 1/4/2017**************
+				if(board[to.getRow()][to.getColumn()] instanceof Pawn){
+					Pawn p = (Pawn) board[to.getRow()][to.getColumn()];
+					p.setFirstTurn(false);
+				}
+				//***************
+				
+				
 				highlight.setRow(-99);
 				
 				for(int i = 0; i<board.length; i++){
