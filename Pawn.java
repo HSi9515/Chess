@@ -14,16 +14,20 @@ public class Pawn extends Piece {
 		super(player);
 		firstTurn = true;
 		
-		if(player == 1)
-			super.setImageIcon("pawn");
-		else
-			super.setImageIcon("pawn");
+	
 	}
+	
+	public void setFirstTurn(boolean b){
+		 firstTurn = b;
+	}
+	
 	
 	public boolean isValidMove(Location from, Location to, Piece[][]b){
 		
 	
-	System.out.println(Math.abs((double) from.row - to.row));	
+	
+		
+		
 	
 	int distanceJumped = (int) Math.abs((double) from.row - to.row);
 	Piece toPiece = b[to.getRow()][to.getColumn()];
@@ -34,15 +38,15 @@ public class Pawn extends Piece {
 		
 			if(from.getRow()>to.getRow() && toPiece.getPlayer() != this.getPlayer()){
 				if(distanceJumped == 1 && to.getColumn() == from.getColumn() && toPiece.getPlayer() == 3){
-					firstTurn = false;
+		
 					return true;
 				}
 				else if(distanceJumped == 1 && to.getColumn() != from.getColumn() && toPiece.getPlayer() == 2){
-					firstTurn = false;
+				
 					return true;
 				}
 				else if(distanceJumped == 2 && to.getColumn() == from.getColumn() && firstTurn && b[to.getRow()+1][to.getColumn()].getPlayer() == 3){
-					firstTurn = false;
+				
 					return true;	
 				}
 				else
@@ -54,15 +58,15 @@ public class Pawn extends Piece {
 			
 			if(from.getRow()<to.getRow() && toPiece.getPlayer() != this.getPlayer()){
 				if(distanceJumped == 1 && to.getColumn() == from.getColumn() && toPiece.getPlayer() == 3){
-					firstTurn = false;
+				
 					return true;
 				}
 				else if(distanceJumped == 1 && to.getColumn() != from.getColumn() && toPiece.getPlayer() == 1){
-					firstTurn = false;
+				
 					return true;
 				}
 				else if(distanceJumped == 2  && to.getColumn() == from.getColumn() && firstTurn && b[to.getRow()-1][to.getColumn()].getPlayer() == 3){
-					firstTurn = false;
+			
 					return true;
 				}
 				else
@@ -77,6 +81,9 @@ public class Pawn extends Piece {
 	
 	
 	
+	
 }
 	
+
+
 
