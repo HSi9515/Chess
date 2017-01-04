@@ -57,6 +57,23 @@ public class Piece {
 	public boolean isValidMove(Location from, Location to, Piece[][]b){
 		return false;
 	}
+	//method: stuck
+	//description: Determines whether the piece can move at all, otherwise it will not allow the piece to be selected
+	public boolean stuck(Piece[][] b, Location from){
+		for(int i = 0; i<8; i++){
+			for(int j = 0; j<8; j++){
+				System.out.println("Here we are, stuck again!");
+				if(isValidMove(from, new Location(j,i), b)){
+					System.out.println("this has returned false, which is good");
+					return false;
+					
+				}
+			}
+				
+		}
+		return true;
+	}
+	
 	
 	// method: draw
 	// description: This method is used to draw the image onto the GraphicsPanel.  You shouldn't need to 
