@@ -20,7 +20,7 @@ public class Bishop extends Piece{
 			int rowToCheck, columnToCheck;
 			
 			for (int i = 1; i < Math.abs(from.row-to.row); i++){
-				rowToCheck = Math.min(from.row, to.row) + i;
+				rowToCheck = from.row + i*(int)Math.signum(to.row-from.row);
 				columnToCheck = from.column + i*(int)Math.signum(to.column-from.column);
 				
 				if (b[rowToCheck][columnToCheck].getPlayer() == 1 || b[rowToCheck][columnToCheck].getPlayer() == 2) {
