@@ -39,15 +39,15 @@ public class Pawn extends Piece {
 		
 			if(from.getRow()>to.getRow() && toPiece.getPlayer() != this.getPlayer()){
 				if(distanceJumped == 1 && to.getColumn() == from.getColumn() && toPiece.getPlayer() == 3){
-					System.out.println("first condition had the error");
+					
 					return true;
 				}
 				else if(distanceJumped == 1 && distanceJumpedHorizontally == 1 && toPiece.getPlayer() == 2){
-					System.out.println("second condition had the error");
+					
 					return true;
 				}
 				else if(distanceJumped == 2 && to.getColumn() == from.getColumn() && firstTurn && b[to.getRow()+1][to.getColumn()].getPlayer() == 3){
-					System.out.println("third condition had the error");
+					
 					return true;	
 				}
 				else
