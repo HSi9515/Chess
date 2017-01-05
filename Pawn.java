@@ -62,7 +62,7 @@ public class Pawn extends Piece {
 				
 					return true;
 				}
-				else if(distanceJumped == 1 && to.getColumn() != from.getColumn() && toPiece.getPlayer() == 1){
+				else if(distanceJumped == 1 && distanceJumpedHorizonally == 1 && toPiece.getPlayer() == 1){
 				
 					return true;
 				}
