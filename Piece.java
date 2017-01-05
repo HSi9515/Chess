@@ -60,7 +60,7 @@ public class Piece {
 	// @param - Location to - the location that the piece will be moved to
 	// @param - Piece[][]b - the chess board.  a two dimensional array of pieces.
 	// return - boolean - true if the move is valid 
-	public boolean isValidMove(Location from, Location to, Piece[][]b){
+	public boolean isValidMove(Location from, Location to, Piece[][]b) {
 		return false;
 	}
 	
@@ -81,5 +81,22 @@ public class Piece {
 
 	public void setPlayer(int player) {
 		this.player = player;
+	}
+	
+	//method: stuck
+	//description: Determines whether the piece can move at all, otherwise it will not allow the piece to be selected
+	public boolean stuck(Piece[][] b, Location from){
+		for(int i = 0; i<8; i++){
+			for(int j = 0; j<8; j++){
+				if(isValidMove(from, new Location(j,i), b)){
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+	
+	public String toString(){
+		return "Player " + player;
 	}
 }

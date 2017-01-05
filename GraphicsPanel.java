@@ -47,20 +47,35 @@ public class GraphicsPanel extends JPanel implements MouseListener{
 		}
 		
 		for(int i = 0; i<8; i++){
-			board[0][i] = new Pawn(1);  //this is where you can instantiate your pieces to test them
-			board[7][i] = new Pawn(2);   //just delete new Pawn and replace it with whichever pieces your making
+
+			board[6][i] = new Pawn(1);  //this is where you can instantiate your pieces to test them
+			board[1][i] = new Pawn(2);   //just delete new Pawn and replace it with whichever pieces your making
+
 		}
-		
-		board[1][1] = new Queen();
-		board[1][2] = new King();
-		board[1][3] = new Bishop();
-		board[6][6] = new Queen(2);
+
+			board[7][4] = new Queen();
+			board[7][2] = new Bishop();
+			board[7][5] = new Bishop();
+			board[7][0] = new Rook();
+			board[7][7] = new Rook();
+			board[7][3] = new King();
+			board[7][1] = new Knight();
+			board[7][6] = new Knight();
+
+			board[0][4] = new Queen(2);
+			board[0][2] = new Bishop(2);
+			board[0][5] = new Bishop(2);
+			board[0][0] = new Rook(2);
+			board[0][7] = new Rook(2);
+			board[0][3] = new King(2);
+			board[0][1] = new Knight(2);
+			board[0][6] = new Knight(2);
 				
 		click = 1;
 		
 		player = 1;
 		
-		font = new Font("Optima", Font.PLAIN, 30); //Andale Mono is ok too
+		font = new Font("Optima", Font.PLAIN, 30);
 	}
 	
 	// method: paintComponent
@@ -145,8 +160,11 @@ public class GraphicsPanel extends JPanel implements MouseListener{
 				from = clicked;
 				highlight = clicked;
 				System.out.println("    Player " + player);
-				click = 2;			
-			
+				
+				if(!board[from.getRow()][from.getColumn()].stuck(board, from))
+					click = 2;
+				else
+					click = 1;			
 			}
 			
 		}
@@ -162,9 +180,9 @@ public class GraphicsPanel extends JPanel implements MouseListener{
 				System.out.println("    Valid move");
 				click = 1;
 				
-				if (player == 1)			//see how this takes 4 lines of code? If we have time and the will, we should change our
-					player++;				//player number assignments to 1 and -1 (for the entire project), so we can just say
-				else if (player == 2)		//player *= -1;
+				if (player == 1)			//If we have time and the will, we should change our player number assignments to 1 
+					player++;				//and -1 (for the entire project), so we can just say player *= -1
+				else if (player == 2)
 					player--;
 			}
 			
@@ -201,6 +219,16 @@ public class GraphicsPanel extends JPanel implements MouseListener{
 		Piece p = board[f.getRow()][f.getColumn()];
 		board[f.getRow()][f.getColumn()] = new Filler();
 		board[t.getRow()][t.getColumn()] = p;
+		
+		if(p instanceof Pawn){
+			Pawn p1 = (Pawn) p;
+			p1.setFirstTurn(false);
+		}
+		
+		if (p instanceof Pawn && t.getRow() == 0 && p.getPlayer() == 1)
+			board[t.getRow()][t.getColumn()] = new Queen(1);
+		else if (p instanceof Pawn && t.getRow() == 7 && p.getPlayer() == 2)
+			board[t.getRow()][t.getColumn()] = new Queen(2);
 		
 	}
 	
