@@ -1,3 +1,5 @@
+
+
 public class King extends Piece{
 
 	public King(){
@@ -21,7 +23,11 @@ public class King extends Piece{
 		
 		for (int i = 0; i < b.length; i++){
 			for (int j = 0; j < b[0].length; j++){
-				if (b[i][j].getPlayer() != this.getPlayer() && b[i][j].isValidMove(new Location(i, j), to, b)) {
+				if (b[i][j] instanceof King && b[i][j].getPlayer() != this.getPlayer() && Math.abs(to.row - i) <= 1 && Math.abs(to.column - j) <= 1){
+					System.out.println("    check by King");
+					return false;
+				}
+				else if (!(b[i][j] instanceof King) && b[i][j].getPlayer() != this.getPlayer() && b[i][j].isValidMove(new Location(i, j), to, b)) {
 					System.out.println("    check by " + b[i][j] + " at "+ i  + ","+ j);
 					return false;
 				}
