@@ -36,6 +36,7 @@ public class GraphicsPanel extends JPanel implements MouseListener{
 	private PieceIcon[] promotionSelections;
 	
 	private Font font;
+	public static String message;
 	
 	private Location risingPawn;
 	
@@ -85,6 +86,7 @@ public class GraphicsPanel extends JPanel implements MouseListener{
 		player = 1;
 		
 		font = new Font("Optima", Font.PLAIN, 30);
+		message = " ";
 		
 		promotionSelections = new PieceIcon[4];
 		promotionSelections[0] = new PieceIcon("queen", new Point(185, 300));
@@ -102,7 +104,7 @@ public class GraphicsPanel extends JPanel implements MouseListener{
 	{
 		Graphics2D g2 = (Graphics2D) g;
 		
-		drawBoard(this, g2);
+		drawBoard(g2);
 		
 		drawHighlight(g2);
 		
@@ -117,7 +119,6 @@ public class GraphicsPanel extends JPanel implements MouseListener{
 
 	
 	public void mouseClicked(MouseEvent e) {
-		
 		Location clicked = new Location((int)e.getY()/90, (int)e.getX()/90);
 	
 		if (state == 0){
@@ -125,17 +126,23 @@ public class GraphicsPanel extends JPanel implements MouseListener{
 			System.out.println("    c = " + clicked.column);
 			System.out.println("    r = " + clicked.row);
 			
+			System.out.println("    "+ state);
+			
 			
 			if(click == 1){
 				if(board[clicked.row][clicked.column].getPlayer() == player){
 					from = clicked;
-					highlight = clicked;
+					highlight = new Location(clicked.row, clicked.column);
 					System.out.println("    " + board[clicked.row][clicked.column]);
 					
-					if(!board[from.getRow()][from.getColumn()].stuck(board, from))
+					if(!board[from.getRow()][from.getColumn()].stuck(board, from)){
 						click = 2;
-					else
-						click = 1;		
+						message = " ";
+					}
+					else{
+						click = 1;	 
+						message = "Stuck, try again";
+					}
 				}
 			}
 			
@@ -143,38 +150,51 @@ public class GraphicsPanel extends JPanel implements MouseListener{
 				to = clicked;
 				
 				if (board[from.row][from.column].isValidMove(from, to, board)){
+					highlight.setRow(-99);
+					message = " ";
+					System.out.println("    Valid move");
+					
 					if (board[to.row][to.column] instanceof King) {
-						state = 2;
 						this.move(from, to);
-						highlight.setRow(-99);
-						System.out.println("    Valid move");
+						state = 2;
 					}
 					
 					else{
 						this.move(from, to);
-						highlight.setRow(-99);
-						System.out.println("    Valid move");
 						click = 1;
 						
-						if (player == 1)			//If we have time and the will, we should change our player number assignments to 1 
-							player++;				//and -1 (for the entire project), so we can just say player *= -1
+						if (board[to.row][to.column] instanceof Pawn && (to.row == 0 || to.row == 7)){
+							risingPawn = new Location(to.getRow(), to.getColumn());
+							state = 1;
+							message = "Promote your pawn";
+						}
+						else if (player == 1)
+							player++;		
 						else if (player == 2)
 							player--;
+
 					}
 				}
+				
+				else
+					message = "Invalid move"; 
+				//edit this to be able to show things like "Check, try again". Tricky though, since we might want do that through
+				//another class
 			}
 		}
 		
 		
 		else if (state == 1){
 			for (PieceIcon p : promotionSelections){
-				if (p.getBounds().contains(e.getPoint()) && player == 1){
-					board[risingPawn.row][risingPawn.column] = p.getNewPiece(2);
+				if (p.getBounds().contains(e.getPoint())){
+					board[risingPawn.row][risingPawn.column] = p.getNewPiece(player);
 					state = 0;
-				}
-				else if (p.getBounds().contains(e.getPoint()) && player == 2){
-					board[risingPawn.row][risingPawn.column] = p.getNewPiece(1);
-					state = 0;
+					message = " ";
+					
+					if (player == 1)
+						player++;		
+					else if (player == 2)
+						player--;
 				}
 			}	
 		}
@@ -214,16 +234,11 @@ public class GraphicsPanel extends JPanel implements MouseListener{
 		if(p instanceof Pawn){
 			Pawn p1 = (Pawn) p;
 			p1.setFirstTurn(false);
-			
-			if (state != 2 && (t.getRow() == 0 && p.getPlayer() == 1) || (t.getRow() == 7 && p.getPlayer() == 2)){
-				risingPawn = new Location(t.getRow(), t.getColumn());
-				state = 1;
-			}
 		}
 		
 	}
 	
-	public void drawBoard(Component c, Graphics g2){
+	public void drawBoard(Graphics g2){
 		g2.setColor(Color.getHSBColor(0, 200, 1));
 		g2.fillRect(0, 0, SQUARE_WIDTH*8, SQUARE_WIDTH*8);
 		
@@ -249,24 +264,21 @@ public class GraphicsPanel extends JPanel implements MouseListener{
 		
 		ClassLoader cldr = this.getClass().getClassLoader();	
 		ImageIcon woodGrain = new ImageIcon(cldr.getResource("images/wood overlay.png"));
-		woodGrain.paintIcon(c, g2, 0, 0);
+		woodGrain.paintIcon(this, g2, 0, 0);
 	}
 	
 	public void drawHighlight(Graphics g2){
 		if(highlight.getRow() >= 0 && highlight.getRow() <= 8){
 			g2.setColor(Color.YELLOW);
-			for (int i = 0; i < 4; i++){
+			for (int i = 0; i < 4; i++)
 				g2.drawRect(highlight.column*SQUARE_WIDTH+i, highlight.row*SQUARE_WIDTH+i, SQUARE_WIDTH-2*i, SQUARE_WIDTH-2*i);
-			}
 		}
 	}
 	
 	public void drawPieces(Graphics g2){
-		for(int i = 0; i<board.length;  i++){
-			for(int j = 0; j<board[i].length; j++){
+		for(int i = 0; i<board.length;  i++)
+			for(int j = 0; j<board[i].length; j++)
 				board[i][j].draw(g2, this, new Location(i,j));
-			}
-		}
 	}
 	
 	public void drawConsole(Graphics g2){
@@ -283,10 +295,17 @@ public class GraphicsPanel extends JPanel implements MouseListener{
 		else if (state == 2 && player == 2)
 			g2.drawString("BLACK WINS!", 260, 747);
 
-		else if (player == 1)
-			g2.drawString("WHITE'S TURN", 255, 747);
-		else if (player == 2)
-			g2.drawString("BLACK'S TURN", 255, 747);
+		else{
+			if (player == 1)
+				g2.drawString("PLAYER: WHITE", 10, 747);
+			else if (player == 2)
+				g2.drawString("PLAYER: BLACK", 10, 747);
+			
+			g2.setColor(Color.getHSBColor(0, 200, 1));
+			g2.setFont(font.deriveFont(Font.PLAIN, 25));
+			g2.drawString(message, (int) (695-message.length()*11.3), 746);
+		}
+
 	}
 	
 	public void drawSelectionPanel(Graphics g2){
@@ -295,12 +314,9 @@ public class GraphicsPanel extends JPanel implements MouseListener{
 		g2.setColor(Color.BLACK);
 		g2.drawRect(160, 240, 400, 200);
 		
-		for (PieceIcon p : promotionSelections){
-			if (player == 1)
-				p.draw(this, g2, 2);
-			else if (player == 2)
-				p.draw(this, g2, 1);
-		}
+		for (PieceIcon p : promotionSelections)
+				p.draw(this, g2, player);
+
 	}
 
 }
