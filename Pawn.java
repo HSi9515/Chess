@@ -1,89 +1,55 @@
-import java.awt.Component;
-import java.awt.Graphics;
-import java.lang.*;
-public class Pawn extends Piece {
-
+public class Rook extends Piece{
 	
+	private boolean firstTurn;
 	
-	public Pawn(){
-		super(1, "images2/pawn1.png");
-	
+	public Rook(){
+		this(1);
 	}
 	
-	public Pawn(int player){
-		super(player);
+	public Rook(int player){
+		super(player, "rook");
 		super.setFirstTurn(true);
-		
-	
 	}
 	
 	
+	public void setFirstTurn(boolean b){
+		 firstTurn = b;
+	}
 	
-	
-	public boolean isValidMove(Location from, Location to, Piece[][]b){
-		
-	
-	
-		
-		
-	
-	int distanceJumped = (int) Math.abs((double) from.row - to.row);
-	int distanceJumpedHorizontally = (int) Math.abs((double) from.column - to.column);
-	Piece toPiece = b[to.getRow()][to.getColumn()];
-	
-	switch(super.getPlayer()){
-	
-		case 1:
-		
-			if(from.getRow()>to.getRow() && toPiece.getPlayer() != this.getPlayer()){
-				if(distanceJumped == 1 && to.getColumn() == from.getColumn() && toPiece.getPlayer() == 3){
-				
-					return true;
-				}
-				else if(distanceJumped == 1 && distanceJumpedHorizontally == 1 && toPiece.getPlayer() == 2){
-					
-					return true;
-				}
-				else if(distanceJumped == 2 && to.getColumn() == from.getColumn() && super.isFirstTurn() && b[to.getRow()+1][to.getColumn()].getPlayer() == 3){
-				
-					return true;	
-				}
-				else
-					return false;
-			}
-		break;
-		
-		case 2:
+	public boolean isValidMove(Location from, Location to, Piece[][] b){
+		if (b[to.row][to.column].getPlayer() == b[from.row][from.column].getPlayer()) {
 			
-			if(from.getRow()<to.getRow() && toPiece.getPlayer() != this.getPlayer()){
-				if(distanceJumped == 1 && to.getColumn() == from.getColumn() && toPiece.getPlayer() == 3){
-				
-					return true;
-				}
-				else if(distanceJumped == 1 && distanceJumpedHorizontally == 1 && toPiece.getPlayer() == 1){
-				
-					return true;
-				}
-				else if(distanceJumped == 2  && to.getColumn() == from.getColumn() && super.isFirstTurn() && b[to.getRow()-1][to.getColumn()].getPlayer() == 3){
-			
-					return true;
-				}
-				else
-					return false;
-			}
-		break;	
-		
+			return false;
 		}
-		return false;
+			
+		
+		else if (from.row == to.row){
+			for (int i = Math.min(from.column, to.column) + 1; i < Math.max(from.column, to.column); i++){
+				if (b[from.row][i].getPlayer() == 1 || b[from.row][i].getPlayer() == 2) {
+					
+					return false;
+				}
+			}
+			return true;
+		}
+		
+		else if (from.column == to.column){
+			for (int i = Math.min(from.row, to.row) + 1; i < Math.max(from.row, to.row); i++){
+				if (b[i][from.column].getPlayer() == 1 || b[i][from.column].getPlayer() == 2){
+					
+					return false;
+				}
+			}
+			return true;
+		}
+		
+		else
+			return false;
 	}
 	
-	
-	
-	
-	
-}
 	
 
+}
 	
 
 
