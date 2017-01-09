@@ -3,23 +3,21 @@ import java.awt.Graphics;
 import java.lang.*;
 public class Pawn extends Piece {
 
-	boolean firstTurn;
+	
 	
 	public Pawn(){
 		super(1, "images2/pawn1.png");
-		firstTurn = true;
+	
 	}
 	
 	public Pawn(int player){
 		super(player);
-		firstTurn = true;
+		super.setFirstTurn(true);
 		
 	
 	}
 	
-	public void setFirstTurn(boolean b){
-		 firstTurn = b;
-	}
+	
 	
 	
 	public boolean isValidMove(Location from, Location to, Piece[][]b){
@@ -39,15 +37,15 @@ public class Pawn extends Piece {
 		
 			if(from.getRow()>to.getRow() && toPiece.getPlayer() != this.getPlayer()){
 				if(distanceJumped == 1 && to.getColumn() == from.getColumn() && toPiece.getPlayer() == 3){
-					
+				
 					return true;
 				}
 				else if(distanceJumped == 1 && distanceJumpedHorizontally == 1 && toPiece.getPlayer() == 2){
 					
 					return true;
 				}
-				else if(distanceJumped == 2 && to.getColumn() == from.getColumn() && firstTurn && b[to.getRow()+1][to.getColumn()].getPlayer() == 3){
-					
+				else if(distanceJumped == 2 && to.getColumn() == from.getColumn() && super.isFirstTurn() && b[to.getRow()+1][to.getColumn()].getPlayer() == 3){
+				
 					return true;	
 				}
 				else
@@ -62,11 +60,11 @@ public class Pawn extends Piece {
 				
 					return true;
 				}
-				else if(distanceJumped == 1 && distanceJumpedHorizonally == 1 && toPiece.getPlayer() == 1){
+				else if(distanceJumped == 1 && distanceJumpedHorizontally == 1 && toPiece.getPlayer() == 1){
 				
 					return true;
 				}
-				else if(distanceJumped == 2  && to.getColumn() == from.getColumn() && firstTurn && b[to.getRow()-1][to.getColumn()].getPlayer() == 3){
+				else if(distanceJumped == 2  && to.getColumn() == from.getColumn() && super.isFirstTurn() && b[to.getRow()-1][to.getColumn()].getPlayer() == 3){
 			
 					return true;
 				}
@@ -82,7 +80,10 @@ public class Pawn extends Piece {
 	
 	
 	
+	
 }
+	
+
 	
 
 
