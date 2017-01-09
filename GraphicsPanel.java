@@ -197,12 +197,44 @@ public class GraphicsPanel extends JPanel implements MouseListener{ //THINGS TO 
 		
 	}
 	
+	//New move method
 	public void move(Location f, Location t){
 		Piece p = board[f.getRow()][f.getColumn()];
 		board[f.getRow()][f.getColumn()] = new Filler();
 		board[t.getRow()][t.getColumn()] = p;
+		p.setFirstTurn(false);
+		
+		
+		
+		//Castling Code
+		if(p instanceof King){
+			King p2 = (King) p;
+			if(p.getPlayer() == 1){
+			
+				
+				if(p2.castleStatus().equals("left")){
+					move(new Location(7,0),new Location(7,3));
+					board[7][7].setFirstTurn(false);
+					
+				}
+				else if(p2.castleStatus().equals("right"))
+					move(new Location(7,7), new Location(7,5));
+					board[7][0].setFirstTurn(false);
+			}
+			else if(p.getPlayer() == 2){
+				if(p2.castleStatus().equals("left")){
+					move(new Location(0,0),new Location(0,3));
+					board[0][7].setFirstTurn(false);
+				}
+				else if(p2.castleStatus().equals("right"))
+					move(new Location(0,7), new Location(0,5));
+					board[0][0].setFirstTurn(false);
+			}
+		}
+		
 		
 	}
+	
 	
 
 }
