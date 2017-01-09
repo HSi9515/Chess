@@ -30,7 +30,7 @@ public class Piece {
 	public Piece(int player){
 		this.setPlayer(player);			
 		setImageIcon("pawn");
-		firstTurn = false;
+		firstTurn = true;
 		
 	}
 	
