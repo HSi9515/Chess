@@ -73,6 +73,34 @@ public class Piece {
 	public boolean isValidMove(Location from, Location to, Piece[][]b){
 		return false;
 	}
+	//January 11 2017
+	//This method runs through every space on the board and determines which moves are legal and returns them in an array
+	//is only called after first click
+	public void setPossibleMoves(Piece[][] b, Location from, ArrayList<Location> returnArray){
+		for(int i = 0; i<8; i++){
+			for(int j = 0; j<8; j++){
+				
+				if(isValidMove(from, new Location(j,i), b)){
+					
+					returnArray.add(new Location(j,i));
+				}
+			}
+				
+		}
+		
+		
+		for(Location e: returnArray)
+			System.out.println(e.getRow() + " " + e.getColumn());
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	//Determines whether the piece can move at all, otherwise it will not allow the piece to be selected
 	public boolean stuck(Piece[][] b, Location from){
 		for(int i = 0; i<8; i++){
