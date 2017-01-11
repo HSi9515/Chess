@@ -5,16 +5,15 @@
 // 				on the JPanel in the GraphicsMain class.  
 //
 // Since you will modify this class you should add comments that describe when and how you modified the class.  
-////
-
-
 
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.ArrayList;
 import java.awt.Color;
 import javax.swing.JPanel;
 
@@ -27,7 +26,12 @@ public class GraphicsPanel extends JPanel implements MouseListener{ //THINGS TO 
 	private Location highlight;// holds the coordinates of the square that the user would like to move to.
 	private int click;   				// false until the game has started by somebody clicking on the board.  should also be set to false
 	                         				// after an attempted move.
-	private Piece[][] board; 				// an 8x8 board of 'Pieces'.  Each spot should be filled by one of the chess pieces or a 'space'. 
+	private Piece[][] board; 
+	
+	private ArrayList<Location> possibleMoves; //January 11 2017
+	
+	private Font font;
+	private int player;
 	
 	public GraphicsPanel()
 	{
@@ -37,6 +41,7 @@ public class GraphicsPanel extends JPanel implements MouseListener{ //THINGS TO 
 		this.addMouseListener(this);
 		
 		board = new Piece[8][8];
+		possibleMoves = new ArrayList<Location>(); //January 11 2017
 		
 		highlight = new Location(-99,0);
 		
@@ -47,14 +52,34 @@ public class GraphicsPanel extends JPanel implements MouseListener{ //THINGS TO 
 		}
 		
 		for(int i = 0; i<8; i++){
-			board[0][i] = new Pawn(2);  //this is where you can instantiate your pieces to test them
-			board[7][i] = new Pawn(1);   //just delete new Pawn and replace it with whichever pieces your making
+			board[1][i] = new Pawn(2);  //this is where you can instantiate your pieces to test them
+			board[6][i] = new Pawn(1);   //just delete new Pawn and replace it with whichever pieces your making
 		}
 		
-		board[1][1] = new Queen();
-		board[1][3] = new Bishop();
+		board[0][0] = new Rook(2);
+		board[0][1] = new Knight(2);
+		board[0][2] = new Bishop(2);
+		board[0][3] = new Queen(2);
+		board[0][4] = new King(2);
+		board[0][5] = new Bishop(2);
+		board[0][6] = new Knight(2);
+		board[0][7] = new Rook(2);
+		
+		
+		board[7][0] = new Rook(1);
+		board[7][1] = new Knight(1);
+		board[7][2] = new Bishop(1);
+		board[7][3] = new Queen(1);
+		board[7][4] = new King(1);
+		board[7][5] = new Bishop(1);
+		board[7][6] = new Knight(1);
+		board[7][7] = new Rook(1);
 				
 		click = 1;
+		
+		player = 1;
+		
+		font = new Font("Optima", Font.PLAIN, 30); //Andale Mono is ok too
 	}
 	
 	// method: paintComponent
@@ -72,8 +97,10 @@ public class GraphicsPanel extends JPanel implements MouseListener{ //THINGS TO 
 		g2.drawLine(OFFSET, OFFSET, SQUARE_WIDTH*8+OFFSET, 0+OFFSET);
 		g2.drawLine(OFFSET, OFFSET, OFFSET, SQUARE_WIDTH*8+OFFSET);
 		
+		
+		
 		for(int i = 0; i <8; i+=2)
-			for (int j = 0; j<8; j+=2)
+			for (int j = 1; j<8; j+=2)
 			{
 				
 				if(highlight.getRow() != -99){
@@ -83,11 +110,17 @@ public class GraphicsPanel extends JPanel implements MouseListener{ //THINGS TO 
 				}
 				
 				g2.setColor(Color.gray);
+			
+				
 				g2.fillRect(i*SQUARE_WIDTH+OFFSET,j*SQUARE_WIDTH+OFFSET,SQUARE_WIDTH,SQUARE_WIDTH);
+				
+				
+				
+				
 			}
 		
 		for(int i = 1; i <8; i+=2)
-			for (int j = 1; j<8; j+=2)
+			for (int j = 0; j<8; j+=2)
 			{
 				if(highlight.getRow() != -99){
 					g2.setColor(Color.YELLOW);
@@ -95,14 +128,40 @@ public class GraphicsPanel extends JPanel implements MouseListener{ //THINGS TO 
 					
 				}
 				g2.setColor(Color.gray);
+				
+
+			
+	
 				g2.fillRect(i*SQUARE_WIDTH+OFFSET,j*SQUARE_WIDTH+OFFSET,SQUARE_WIDTH,SQUARE_WIDTH);
 			}
+		
+		
+	
+		
 		
 		//Drawing the pieces and spaces
 		for(int i = 0; i<board.length;  i++){
 			for(int j = 0; j<board[i].length; j++){
 				//if(board[i][j].getPlayer() != 3)
+				
+					
+				
+				
 					board[i][j].draw(g2, this, new Location(i,j));
+			}
+		}
+		
+		
+		for(int i = 0; i<board.length;  i++){ 			//January 11 2017
+			for(int j = 0; j<board[i].length; j++){
+				for(Location e: possibleMoves)
+					if(e.getRow() == i && e.getColumn() == j){
+						g2.setColor(Color.CYAN);
+					
+						g2.fill3DRect(j*SQUARE_WIDTH+OFFSET+35,i*SQUARE_WIDTH+OFFSET+35,SQUARE_WIDTH-70,SQUARE_WIDTH-70, true);
+					}
+						
+				
 			}
 		}
 		
@@ -116,13 +175,19 @@ public class GraphicsPanel extends JPanel implements MouseListener{ //THINGS TO 
 		System.out.println("    y = " + (int)e.getY()/90);
 		
 		
+		
+		
 		if(click == 1){
 			
-			if(board[(int)e.getY()/90][ (int)e.getX()/90].getPlayer() != 3){
+			if(board[(int)e.getY()/90][ (int)e.getX()/90].getPlayer() == player){
+				
+				
 			
+				
 				from = new Location((int)e.getY()/90, (int)e.getX()/90);
 				highlight = from;
 				System.out.println("    Player " + board[from.getRow()][from.getColumn()].getPlayer());
+				
 				
 				//NEW PARTS  1/4/2017*************
 				if(!board[from.getRow()][from.getColumn()].stuck(board, from))
@@ -130,6 +195,9 @@ public class GraphicsPanel extends JPanel implements MouseListener{ //THINGS TO 
 				else
 					click = 1;
 				//**********************************
+				
+				board[from.getRow()][from.getColumn()].setPossibleMoves(board, from, possibleMoves);
+				
 			
 			}
 			
@@ -137,23 +205,22 @@ public class GraphicsPanel extends JPanel implements MouseListener{ //THINGS TO 
 		
 		else if(click == 2){
 						
+			
+			
 			to = new Location((int)e.getY()/90, (int)e.getX()/90);
 			
 			if (board[from.getRow()][from.getColumn()].isValidMove(from, to, board)){
 					
-				System.out.println("    Valid move");
+				
+				possibleMoves.clear();  // January 11 2017
+				
 			
 				this.move(from, to);
-				
-				//NEW PARTS 1/4/2017**************
-				if(board[to.getRow()][to.getColumn()] instanceof Pawn){
-					Pawn p = (Pawn) board[to.getRow()][to.getColumn()];
-					p.setFirstTurn(false);
-				}
-				//***************
-				
-				
 				highlight.setRow(-99);
+				
+				
+				
+				
 				
 				for(int i = 0; i<board.length; i++){
 					if(board[0][i] instanceof Pawn && board[0][i].getPlayer() == 1)
@@ -162,9 +229,15 @@ public class GraphicsPanel extends JPanel implements MouseListener{ //THINGS TO 
 						board[7][i] = new Queen(2);	
 				}
 				
-				
-				
 				click = 1;
+				
+				
+				if (player == 1)			
+					player++;				
+				else if (player == 2)		
+					player--;
+				
+				
 			}
 			
 		
@@ -197,7 +270,6 @@ public class GraphicsPanel extends JPanel implements MouseListener{ //THINGS TO 
 		
 	}
 	
-	//New move method
 	public void move(Location f, Location t){
 		Piece p = board[f.getRow()][f.getColumn()];
 		board[f.getRow()][f.getColumn()] = new Filler();
@@ -235,7 +307,5 @@ public class GraphicsPanel extends JPanel implements MouseListener{ //THINGS TO 
 		
 	}
 	
-	
 
 }
-
