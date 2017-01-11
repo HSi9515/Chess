@@ -18,7 +18,7 @@ public class King extends Piece{
 	
 	public boolean isValidMove(Location from, Location to, Piece[][]b) {
 		
-		if(isFirstTurn() && to.getRow() == from.getRow() && to.getColumn() == 6 || to.getColumn() == 2){
+		if(isFirstTurn() && to.getRow() == from.getRow()){
 		
 			System.out.println("are here");
 			boolean leftOfKingEmpty = false;
@@ -27,15 +27,18 @@ public class King extends Piece{
 			int leftCounter = 0;
 			int rightCounter = 0;
 			
-			for(int i = from.getColumn()+1; i<7; i++)
-				if(b[from.getRow()][i].getPlayer() == 3)
-					rightCounter++;
+			if(to.getColumn() == 6){
+				for(int i = from.getColumn()+1; i<7; i++)
+					if(b[from.getRow()][i].getPlayer() == 3)
+						rightCounter++;
+			}
 		
-			for(int i = from.getColumn()-1; i>0; i--)
-				if(b[from.getRow()][i].getPlayer() == 3)
-					leftCounter++;
+			else if(to.getColumn() == 2){
+				for(int i = from.getColumn()-1; i>0; i--)
+					if(b[from.getRow()][i].getPlayer() == 3)
+						leftCounter++;
 			
-			
+			}
 				if(b[from.getRow()][7].isFirstTurn() && rightCounter == 2){
 					System.out.println("Success, to the right");
 					castled = "right";
