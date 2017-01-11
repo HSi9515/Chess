@@ -1,11 +1,15 @@
 
 public class Rook extends Piece{
+	
+	private boolean firstTurn;
+	
 	public Rook(){
 		this(1);
 	}
 	
 	public Rook(int player){
 		super(player, "rook");
+		super.setFirstTurn(true);
 	}
 	
 	public boolean isValidMove(Location from, Location to, Piece[][] b){
@@ -39,6 +43,9 @@ public class Rook extends Piece{
 			return false;
 	}
 	
+	public void setFirstTurn(boolean b){
+		 firstTurn = b;
+	}
 	
 
 }

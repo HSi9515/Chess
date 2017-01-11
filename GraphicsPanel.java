@@ -178,7 +178,7 @@ public class GraphicsPanel extends JPanel implements MouseListener{
 				
 				else
 					message = "Invalid move"; 
-				//edit this to be able to show things like "Check, try again". Tricky though, since we might want do that through
+				//edit this to be able to show things like "Check, try again". Tricky though, since we might want to do that through
 				//another class
 			}
 		}
@@ -235,6 +235,32 @@ public class GraphicsPanel extends JPanel implements MouseListener{
 			Pawn p1 = (Pawn) p;
 			p1.setFirstTurn(false);
 		}
+		
+		if(p instanceof King){
+			King p2 = (King) p;
+			if(p.getPlayer() == 1){
+			
+				
+				if(p2.castleStatus().equals("left")){
+					move(new Location(7,0),new Location(7,3));
+					board[7][7].setFirstTurn(false);
+					
+				}
+				else if(p2.castleStatus().equals("right"))
+					move(new Location(7,7), new Location(7,5));
+					board[7][0].setFirstTurn(false);
+			}
+			else if(p.getPlayer() == 2){
+				if(p2.castleStatus().equals("left")){
+					move(new Location(0,0),new Location(0,3));
+					board[0][7].setFirstTurn(false);
+				}
+				else if(p2.castleStatus().equals("right"))
+					move(new Location(0,7), new Location(0,5));
+					board[0][0].setFirstTurn(false);
+			}
+		}
+		
 		
 	}
 	

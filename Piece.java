@@ -18,6 +18,8 @@ public class Piece {
 	
 	private int player;					// This int will represent which team the piece is, 1 for white team, 
 									    // 2 for black team. 
+	private boolean firstTurn;								    // 2 for black team. 
+
 	
 	// method: Default constructor - see packed constructors comments for a description of parameters.
 	public Piece(){
@@ -81,6 +83,15 @@ public class Piece {
 
 	public void setPlayer(int player) {
 		this.player = player;
+	}
+	
+	public boolean isFirstTurn(){
+		return firstTurn;
+	}
+	
+	public void setFirstTurn(boolean b) {
+		firstTurn = b;
+		
 	}
 	
 	//method: stuck
