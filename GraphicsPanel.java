@@ -5,7 +5,6 @@
 // 				on the JPanel in the GraphicsMain class.  
 //
 // Since you will modify this class you should add comments that describe when and how you modified the class.  
-
 import java.awt.Dimension;
 
 import java.awt.Font;
@@ -60,15 +59,15 @@ public class GraphicsPanel extends JPanel implements MouseListener{
 
 	private PieceIcon[] promotionSelections;
 
-	private LogArchive gameLog;
+	private LogArchive gameLog;	//  Jan 17 2017
 	
 
 	private Font font;
 
 	public static String message;
 	
-	private int blackSum;
-	private int whiteSum;
+	private int blackSum; //  Jan 17 2017
+	private int whiteSum; //  Jan 17 2017
 
 	
 
@@ -94,7 +93,7 @@ public class GraphicsPanel extends JPanel implements MouseListener{
 		
 		possibleMoves = new ArrayList<Location>();
 		
-		gameLog = new LogArchive();
+		gameLog = new LogArchive(); //  Jan 17 2017
 
 		
 
@@ -226,7 +225,7 @@ public class GraphicsPanel extends JPanel implements MouseListener{
 		drawPossibleMoves(g2);
 		
 		
-		drawLog(g2);
+		drawLog(g2); //  Jan 17 2017
 
 		
 
@@ -243,6 +242,7 @@ public class GraphicsPanel extends JPanel implements MouseListener{
 	
 
 	public void mouseClicked(MouseEvent e) {
+
 
 		Location clicked = new Location((int)e.getY()/90, (int)e.getX()/90);
 
@@ -428,8 +428,8 @@ public class GraphicsPanel extends JPanel implements MouseListener{
 		board[t.getRow()][t.getColumn()] = p;
 		p.setFirstTurn(false);
 		
-		gameLog.getLog().add(gameLog.determineColor(p) + gameLog.determinePiece(p) 
-		+ " " + gameLog.convertColumn(t.getColumn()) + gameLog.convertRow(t.getRow()));
+		gameLog.getLog().add(gameLog.determineColor(p) + gameLog.determinePiece(p)  
+		+ " " + gameLog.convertColumn(t.getColumn()) + gameLog.convertRow(t.getRow())); //  Jan 17 2017
 		
 	
 		
@@ -601,7 +601,7 @@ public class GraphicsPanel extends JPanel implements MouseListener{
 			}
 		}
 	}
-	public void drawLog(Graphics g2){
+	public void drawLog(Graphics g2){    //  Jan 17 2017
 		g2.setColor(Color.LIGHT_GRAY);
 		g2.fillRect(725, 0, 300, 1000);
 		
@@ -634,7 +634,7 @@ public class GraphicsPanel extends JPanel implements MouseListener{
 		gameLog.refresh();
 		
 	}
-	public void materialAdvantage(){
+	public void materialAdvantage(){    //  Jan 17 2017
 		 whiteSum = 0;
 		 blackSum = 0;
 		
@@ -673,8 +673,5 @@ public class GraphicsPanel extends JPanel implements MouseListener{
 	public void mouseReleased(MouseEvent e) {}
 	public void mouseEntered(MouseEvent e) {}
 	public void mouseExited(MouseEvent e) {}
-
-}
-	
 
 }
