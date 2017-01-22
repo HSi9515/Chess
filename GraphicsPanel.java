@@ -32,7 +32,7 @@ public class GraphicsPanel extends JPanel implements MouseListener{
 	private int state;						//0 = playing, 1 = selecting, 2 = game over
 	private int player;						//1 = white, 2 = black
 
-	private Piece[][] board; 				// an 8x8 board of 'Pieces'.  Each spot should be filled by one of the chess pieces or a 'space'. 
+	private Piece[][] board; 				// an 8x8 board of 'Pieces'
 
 	private ArrayList<Location> possibleMoves;
 	
@@ -172,7 +172,7 @@ public class GraphicsPanel extends JPanel implements MouseListener{
 					highlight.setRow(-99);
 					message = " ";
 					
-					if (board[to.row][to.column] instanceof King || checkmate()) {
+					if (board[to.row][to.column] instanceof King) {
 						this.move(from, to);
 						state = 2;
 					}
@@ -181,7 +181,10 @@ public class GraphicsPanel extends JPanel implements MouseListener{
 						this.move(from, to);
 						click = 1;
 						
-						if (board[to.row][to.column] instanceof Pawn && (to.row == 0 || to.row == 7)){
+						if (checkmate())
+							state = 2;
+							
+						else if (board[to.row][to.column] instanceof Pawn && (to.row == 0 || to.row == 7)){
 							risingPawn = new Location(to.getRow(), to.getColumn());
 							state = 1;
 							message = "Promote your pawn";
@@ -192,8 +195,8 @@ public class GraphicsPanel extends JPanel implements MouseListener{
 						else if (player == 2)
 							player--;
 
-						if (check())
-							checkMessage = "check";
+						if (check()) //technically, this shouldn't be running if checkmate was true, but the message
+							checkMessage = "check"; //will be overwritten anyway
 						else
 							checkMessage = "";
 					}
@@ -495,23 +498,33 @@ public class GraphicsPanel extends JPanel implements MouseListener{
 		
 		int numValidMoves = 0; //for the king
 		int numCheckedMoves = 0;
+		Piece pieceTo;
 		
 		for (int i = 0; i < board.length; i++){
 			for (int j = 0; j < board[0].length; j++){
 				if (board[king.row][king.column].isValidMove(king, new Location(i, j), board)){
 					numValidMoves++;
 					System.out.println("Valid move: " + i + ", " + j);
+					
+					pieceTo = board[i][j];
+					board[i][j] = board[king.row][king.column];
+					board[king.row][king.column] = new Filler();
+								
 					for (int r = 0; r < board.length; r++){
 						for (int c = 0; c < board[0].length; c++){
 							if (board[r][c].getPlayer() != targetPlayer && board[r][c].isValidMove(new Location(r,c), 
 									new Location(i, j), board)){
+								
 								numCheckedMoves++;
-								System.out.println("--> checked by " + board[r][c]);
+								System.out.println("--> checked by " + board[r][c]);	
+								
 								r = board.length;
 								c = board[0].length;
 							}
 						}
 					}
+					board[king.row][king.column] = board[i][j];
+					board[i][j] = pieceTo;	
 				}
 			}
 		}
