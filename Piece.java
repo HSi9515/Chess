@@ -8,6 +8,7 @@
 import java.awt.Component;
 import java.awt.Graphics;
 import java.net.URL;
+import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
 
@@ -19,6 +20,7 @@ public class Piece {
 	private int player;					// This int will represent which team the piece is, 1 for white team, 
 									    // 2 for black team. 
 	private boolean firstTurn;								    // 2 for black team. 
+	private boolean turn;
 
 	
 	// method: Default constructor - see packed constructors comments for a description of parameters.
@@ -55,17 +57,6 @@ public class Piece {
         image = new ImageIcon(imageURL);
 	}
 	
-	// method: isValidMove
-	// description: This method checks to see if a move is valid.
-	// Returns whether or not the attempted move is valid.
-	// @param - Location from - the location that the piece will be moved from
-	// @param - Location to - the location that the piece will be moved to
-	// @param - Piece[][]b - the chess board.  a two dimensional array of pieces.
-	// return - boolean - true if the move is valid 
-	public boolean isValidMove(Location from, Location to, Piece[][]b) {
-		return false;
-	}
-	
 	// method: draw
 	// description: This method is used to draw the image onto the GraphicsPanel.  You shouldn't need to 
 	//				modify this method.
@@ -94,6 +85,25 @@ public class Piece {
 		
 	}
 	
+	public boolean isTurn() {
+		return turn;
+	}
+
+	public void setTurn(boolean turn) {
+		this.turn = turn;
+	}
+	
+	// method: isValidMove
+	// description: This method checks to see if a move is valid.
+	// Returns whether or not the attempted move is valid.
+	// @param - Location from - the location that the piece will be moved from
+	// @param - Location to - the location that the piece will be moved to
+	// @param - Piece[][]b - the chess board.  a two dimensional array of pieces.
+	// return - boolean - true if the move is valid 
+	public boolean isValidMove(Location from, Location to, Piece[][]b) {
+		return false;
+	}
+
 	//method: stuck
 	//description: Determines whether the piece can move at all, otherwise it will not allow the piece to be selected
 	public boolean stuck(Piece[][] b, Location from){
@@ -105,6 +115,57 @@ public class Piece {
 			}
 		}
 		return true;
+	}
+	
+	public boolean kingWillBeChecked(Location from, Location to, Piece[][] b){
+		Piece pieceTo = b[to.row][to.column];
+		b[to.row][to.column] = b[from.row][from.column];
+		b[from.row][from.column] = new Filler();
+		
+		Location king = new Location();
+		for (int i = 0; i < b.length; i++){
+			for (int j = 0; j < b[0].length; j++){
+				if (b[i][j].getPlayer() == player && b[i][j] instanceof King){
+					king.setRow(i);
+					king.setColumn(j);
+					i = b.length;
+					j = b[0].length;
+				}
+			}
+		}
+		
+		for (int i = 0; i < b.length; i++){
+			for (int j = 0; j < b[0].length; j++){
+				if (b[i][j].getPlayer() != player && b[i][j].isValidMove(new Location(i, j), king, b)){
+					//RESET BOARD
+					b[from.row][from.column] = b[to.row][to.column];
+					b[to.row][to.column] = pieceTo;		
+					return true;
+				}
+			}
+		}
+		
+		//RESET BOARD
+		b[from.row][from.column] = b[to.row][to.column];
+		b[to.row][to.column] = pieceTo;
+		
+		return false;
+	}
+	
+	//January 11 2017
+	//This method runs through every space on the board and determines which moves are legal and returns them in an array
+	//is only called after first click
+	public void setPossibleMoves(Piece[][] b, Location from, ArrayList<Location> returnArray){
+		for(int i = 0; i<8; i++){
+			for(int j = 0; j<8; j++){
+				if(isValidMove(from, new Location(j,i), b))
+					returnArray.add(new Location(j,i));
+			}
+				
+		}
+		
+//		for(Location e: returnArray)
+//			System.out.println(e.getRow() + " " + e.getColumn());
 	}
 	
 	public String toString(){

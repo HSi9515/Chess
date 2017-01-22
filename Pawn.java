@@ -22,11 +22,13 @@ public class Pawn extends Piece{
 	}
 
 	public boolean isValidMove(Location from, Location to, Piece[][]b){
-		//System.out.println(Math.abs(from.row - to.row));	
 		
 		int verticalDistance = Math.abs(from.row - to.row);
 		int horizantalDistance = Math.abs(from.column - to.column);
 		Piece toPiece = b[to.getRow()][to.getColumn()];
+		
+		if (isTurn() && kingWillBeChecked(from, to, b))
+			return false;
 		
 		switch(super.getPlayer()){
 		

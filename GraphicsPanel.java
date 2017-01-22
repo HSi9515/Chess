@@ -13,6 +13,7 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.ArrayList;
 import java.awt.Color;
 import java.awt.Component;
 
@@ -33,21 +34,32 @@ public class GraphicsPanel extends JPanel implements MouseListener{
 
 	private Piece[][] board; 				// an 8x8 board of 'Pieces'.  Each spot should be filled by one of the chess pieces or a 'space'. 
 
+	private ArrayList<Location> possibleMoves;
+	
 	private PieceIcon[] promotionSelections;
 	
+	private LogArchive gameLog;
+	
 	private Font font;
-	public static String message;
+	public static String message; //if not going to use this in other classes, change back to private
+	public static String checkMessage;
+	
+	private int blackSum;
+	private int whiteSum;
 	
 	private Location risingPawn;
 	
 	public GraphicsPanel()
 	{
-		setPreferredSize(new Dimension(SQUARE_WIDTH*8+2,SQUARE_WIDTH*8+34));      
+		setPreferredSize(new Dimension(SQUARE_WIDTH*8+2+(300),SQUARE_WIDTH*8+34));    
         this.setFocusable(true);					 // for keylistener
 		this.addMouseListener(this);
 		
 		//FILLING THE BOARD
 		board = new Piece[8][8];
+		possibleMoves = new ArrayList<Location>(); 
+		
+		gameLog = new LogArchive(); //  Jan 17 2017
 		
 		for(int i = 0; i<8; i++){
 			for(int j = 0; j<board[i].length; j++){
@@ -87,6 +99,7 @@ public class GraphicsPanel extends JPanel implements MouseListener{
 		
 		font = new Font("Optima", Font.PLAIN, 30);
 		message = " ";
+		checkMessage = " ";
 		
 		promotionSelections = new PieceIcon[4];
 		promotionSelections[0] = new PieceIcon("queen", new Point(185, 300));
@@ -110,7 +123,11 @@ public class GraphicsPanel extends JPanel implements MouseListener{
 		
 		drawPieces(g2);
 		
+		drawPossibleMoves(g2);
+		
 		drawConsole(g2);
+		
+		drawLog(g2);
 		
 		if (state == 1)
 			drawSelectionPanel(g2);
@@ -121,25 +138,26 @@ public class GraphicsPanel extends JPanel implements MouseListener{
 	public void mouseClicked(MouseEvent e) {
 		Location clicked = new Location((int)e.getY()/90, (int)e.getX()/90);
 	
-		if (state == 0){
+		if (state == 0 && e.getY() <= 720 && e.getX()/90 <= 720){
 			System.out.println("Click "+ click);
 			System.out.println("    c = " + clicked.column);
-			System.out.println("    r = " + clicked.row);
-			
-			System.out.println("    "+ state);
-			
+			System.out.println("    r = " + clicked.row);			
 			
 			if(click == 1){
 				if(board[clicked.row][clicked.column].getPlayer() == player){
-					from = clicked;
-					highlight = new Location(clicked.row, clicked.column);
 					System.out.println("    " + board[clicked.row][clicked.column]);
 					
+					from = clicked;
+					highlight = new Location(clicked.row, clicked.column);
+					board[clicked.row][clicked.column].setTurn(true);
+
 					if(!board[from.getRow()][from.getColumn()].stuck(board, from)){
+						board[from.getRow()][from.getColumn()].setPossibleMoves(board, from, possibleMoves);
 						click = 2;
 						message = " ";
 					}
 					else{
+						board[clicked.row][clicked.column].setTurn(false);
 						click = 1;	 
 						message = "Stuck, try again";
 					}
@@ -150,11 +168,11 @@ public class GraphicsPanel extends JPanel implements MouseListener{
 				to = clicked;
 				
 				if (board[from.row][from.column].isValidMove(from, to, board)){
+					possibleMoves.clear();
 					highlight.setRow(-99);
 					message = " ";
-					System.out.println("    Valid move");
 					
-					if (board[to.row][to.column] instanceof King) {
+					if (board[to.row][to.column] instanceof King || checkmate()) {
 						this.move(from, to);
 						state = 2;
 					}
@@ -168,11 +186,16 @@ public class GraphicsPanel extends JPanel implements MouseListener{
 							state = 1;
 							message = "Promote your pawn";
 						}
+						
 						else if (player == 1)
 							player++;		
 						else if (player == 2)
 							player--;
 
+						if (check())
+							checkMessage = "check";
+						else
+							checkMessage = "";
 					}
 				}
 				
@@ -195,6 +218,11 @@ public class GraphicsPanel extends JPanel implements MouseListener{
 						player++;		
 					else if (player == 2)
 						player--;
+					
+					if (check())
+						checkMessage = "check";
+					else
+						checkMessage = "";
 				}
 			}	
 		}
@@ -230,11 +258,15 @@ public class GraphicsPanel extends JPanel implements MouseListener{
 		Piece p = board[f.getRow()][f.getColumn()];
 		board[f.getRow()][f.getColumn()] = new Filler();
 		board[t.getRow()][t.getColumn()] = p;
+		p.setTurn(false);
 		
 		if(p instanceof Pawn){
 			Pawn p1 = (Pawn) p;
 			p1.setFirstTurn(false);
 		}
+		
+		gameLog.getLog().add(gameLog.determineColor(p) + gameLog.determinePiece(p)  
+		+ " " + gameLog.convertColumn(t.getColumn()) + gameLog.convertRow(t.getRow()));
 		
 		if(p instanceof King){
 			King p2 = (King) p;
@@ -293,6 +325,19 @@ public class GraphicsPanel extends JPanel implements MouseListener{
 		woodGrain.paintIcon(this, g2, 0, 0);
 	}
 	
+	public void drawPossibleMoves(Graphics g2){
+		for(int i = 0; i<board.length;  i++){ 
+			for(int j = 0; j<board[i].length; j++){
+				for(Location e: possibleMoves)
+					if(e.getRow() == i && e.getColumn() == j){
+						g2.setColor(Color.CYAN);
+					
+						g2.fill3DRect(j*SQUARE_WIDTH+35,i*SQUARE_WIDTH+35,SQUARE_WIDTH-70,SQUARE_WIDTH-70, true);
+					}
+			}
+		}
+	}
+	
 	public void drawHighlight(Graphics g2){
 		if(highlight.getRow() >= 0 && highlight.getRow() <= 8){
 			g2.setColor(Color.YELLOW);
@@ -329,6 +374,7 @@ public class GraphicsPanel extends JPanel implements MouseListener{
 			
 			g2.setColor(Color.getHSBColor(0, 200, 1));
 			g2.setFont(font.deriveFont(Font.PLAIN, 25));
+			g2.drawString(checkMessage, 330, 746);
 			g2.drawString(message, (int) (695-message.length()*11.3), 746);
 		}
 
@@ -343,6 +389,137 @@ public class GraphicsPanel extends JPanel implements MouseListener{
 		for (PieceIcon p : promotionSelections)
 				p.draw(this, g2, player);
 
+	}
+	
+	public void drawLog(Graphics g2){ 
+		g2.setColor(Color.LIGHT_GRAY);
+		g2.fillRect(725, 0, 300, 1000);
+		
+		g2.setColor(Color.BLACK);
+		g2.setFont(new Font("Optima", Font.PLAIN, 40));
+		g2.drawString("Log", 850, 45);
+		
+		int ypos = 75;
+		int xpos = 0;
+		g2.setFont(new Font("Optima", Font.PLAIN, 12));
+		
+		
+		for(int i = 0; i<gameLog.getLog().size(); i++){
+			
+			if(i%4 == 0 && i != 0){
+				ypos+=15;
+				xpos = 0;
+				
+			}
+			g2.drawString(gameLog.getLog().get(i), (xpos*75)+725, ypos);
+			xpos++;
+		}
+		
+		materialAdvantage();
+		
+		g2.setFont(new Font("Optima", Font.PLAIN, 15));
+		g2.drawString("Black Material: " + blackSum, 890, 747);
+		g2.drawString("White Material: " + whiteSum, 730, 747);
+		
+		gameLog.refresh();
+		
+	}
+	public void materialAdvantage(){ 
+		 whiteSum = 0;
+		 blackSum = 0;
+		
+		int val = 0;
+		
+		for(int i = 0; i<8; i++){
+			for(int j = 0; j<8; j++){
+			
+				if(board[i][j] instanceof Pawn)
+					val = 1;
+				else if(board[i][j] instanceof Rook)
+					val = 3;
+				else if(board[i][j] instanceof Knight)
+					val = 2;
+				else if(board[i][j] instanceof Bishop)
+					val = 2;
+				else if(board[i][j] instanceof Queen)
+					val = 4;
+				else
+					val = 0;
+				
+				if(board[i][j].getPlayer() == 1)
+					whiteSum+=val;
+				else if(board[i][j].getPlayer() == 2)
+					blackSum+=val;
+				
+			}
+		}
+		
+	}
+	
+	public Location findKing(int targetPlayer){
+		Location king = new Location();
+		for (int i = 0; i < board.length; i++){
+			for (int j = 0; j < board[0].length; j++){
+				if (board[i][j].getPlayer() == targetPlayer && board[i][j] instanceof King){
+					king.setRow(i);
+					king.setColumn(j);
+					i = board.length;
+					j = board[0].length;
+				}
+			}
+		}
+		return king;
+	}
+	
+	public boolean check(){
+		Location king = findKing(player);
+		
+		for (int i = 0; i < board.length; i++){
+			for (int j = 0; j < board[0].length; j++){
+				if (board[i][j].getPlayer() != player && board[i][j].isValidMove(new Location(i, j), king, board))
+					return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	public boolean checkmate(){ //THIS METHOD ISN'T WORKING
+		int targetPlayer = 0;
+		if (player == 1)
+			targetPlayer = 2;
+		else if (player == 2)
+			targetPlayer = 1;
+			
+		Location king = findKing(targetPlayer);
+		
+		int numValidMoves = 0; //for the king
+		int numCheckedMoves = 0;
+		
+		for (int i = 0; i < board.length; i++){
+			for (int j = 0; j < board[0].length; j++){
+				if (board[king.row][king.column].isValidMove(king, new Location(i, j), board)){
+					numValidMoves++;
+					System.out.println("Valid move: " + i + ", " + j);
+					for (int r = 0; r < board.length; r++){
+						for (int c = 0; c < board[0].length; c++){
+							if (board[r][c].getPlayer() != targetPlayer && board[r][c].isValidMove(new Location(r,c), 
+									new Location(i, j), board)){
+								numCheckedMoves++;
+								System.out.println("--> checked by " + board[r][c]);
+								r = board.length;
+								c = board[0].length;
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		if (numValidMoves > 0 && numValidMoves == numCheckedMoves)
+			return true;
+		
+		return false;
 	}
 
 }
