@@ -1,3 +1,5 @@
+//Chess Project
+
 import java.io.IOException;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
