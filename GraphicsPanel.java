@@ -29,8 +29,8 @@ public class GraphicsPanel extends JPanel implements MouseListener{
 	private Location highlight;				// holds the coordinates of the square that the user would like to move to.
 	
 	private int click;   						
-	private int state;						//0 = playing, 1 = selecting, 2 = game over
-	private int player;						//1 = white, 2 = black
+	private int state;					//0 = playing, 1 = selecting, 2 = game over
+	private int player;					//1 = white, 2 = black
 
 	private Piece[][] board; 				// an 8x8 board of 'Pieces'
 
@@ -41,8 +41,8 @@ public class GraphicsPanel extends JPanel implements MouseListener{
 	private LogArchive gameLog;
 	
 	private Font font;
-	public static String message; //if not going to use this in other classes, change back to private
-	public static String checkMessage;
+	private String message; //maybe make public and static so other classes can write to it (e.g. "Invalid: putting king in check")
+	private String checkMessage;
 	
 	private int blackSum;
 	private int whiteSum;
@@ -487,7 +487,7 @@ public class GraphicsPanel extends JPanel implements MouseListener{
 		return false;
 	}
 	
-	public boolean checkmate(){ //THIS METHOD ISN'T WORKING
+	public boolean checkmate(){
 		int targetPlayer = 0;
 		if (player == 1)
 			targetPlayer = 2;
