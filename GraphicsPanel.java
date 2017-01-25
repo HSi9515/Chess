@@ -526,6 +526,23 @@ public class GraphicsPanel extends JPanel implements MouseListener{
 					board[king.row][king.column] = board[i][j];
 					board[i][j] = pieceTo;	
 				}
+				else if (king.equals(new Location(i, j))){
+					numValidMoves++; //king must be in check
+					
+					for (int r = 0; r < board.length; r++){
+						for (int c = 0; c < board[0].length; c++){
+							if (board[r][c].getPlayer() != targetPlayer && board[r][c].isValidMove(new Location(r,c), 
+									new Location(i, j), board)){
+								
+								numCheckedMoves++;
+								System.out.println("--> checked by " + board[r][c]);	
+								
+								r = board.length;
+								c = board[0].length;
+							}
+						}
+					}
+				}
 			}
 		}
 		
